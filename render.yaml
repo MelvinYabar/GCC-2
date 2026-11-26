@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: crud-productos-api
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /api/productos
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: DATABASE_URL
+        fromDatabase:
+          name: crud-productos-db
+          property: connectionString
+
+databases:
+  - name: crud-productos-db
+    plan: free
+    region: oregon
+    databaseName: productos
+    ipAllowList: []

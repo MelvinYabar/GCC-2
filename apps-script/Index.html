@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_top">
+  <style>
+    body { max-width: 640px; margin: 40px auto; padding: 0 16px; font: 16px system-ui, sans-serif; }
+    form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+    label { display: grid; gap: 4px; }
+    input, button { padding: 6px; font: inherit; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 8px; border-bottom: 1px solid #ccc; }
+    td button { margin-right: 5px; }
+    #mensaje { min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <h1>Productos</h1>
+  <form id="formulario">
+    <label>Nombre <input name="nombre" maxlength="100" required></label>
+    <label>Precio <input name="precio" type="number" min="0" max="99999999.99" step="0.01" required></label>
+    <button id="guardar" type="submit">Agregar</button>
+    <button id="cancelar" type="button" hidden>Cancelar</button>
+  </form>
+  <p id="mensaje" role="status"></p>
+  <table>
+    <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Acciones</th></tr></thead>
+    <tbody id="filas"></tbody>
+  </table>
+  <script>
+    const formulario = document.getElementById('formulario');
+    const nombre = formulario.elements.nombre;
+    const precio = formulario.elements.precio;
+    const guardar = document.getElementById('guardar');
+    const cancelar = document.getElementById('cancelar');
+    const filas = document.getElementById('filas');
+    const mensaje = document.getElementById('mensaje');
+    let idEditado = null;
+
+    function bloquear(estado) {
+      document.querySelectorAll('button, input').forEach(el => el.disabled = estado);
+    }
+
+    function mostrarError(error) {
+      mensaje.textContent = error.message;
+      bloquear(false);
+    }
+
+    function cargar() {
+      bloquear(true);
+      mensaje.textContent = 'Cargando…';
+      google.script.run.withFailureHandler(mostrarError).withSuccessHandler(productos => {
+        filas.replaceChildren();
+        productos.forEach(mostrarProducto);
+        mensaje.textContent = productos.length ? '' : 'Aún no hay productos.';
+        bloquear(false);
+      }).listarProductos();
+    }
+
+    function mostrarProducto(producto) {
+      const fila = filas.insertRow();
+      [producto.id, producto.nombre, Number(producto.precio).toFixed(2)].forEach(valor => {
+        fila.insertCell().textContent = valor;
+      });
+      const acciones = fila.insertCell();
+      const editar = document.createElement('button');
+      editar.textContent = 'Editar';
+      editar.onclick = () => iniciarEdicion(producto);
+      const eliminar = document.createElement('button');
+      eliminar.textContent = 'Eliminar';
+      eliminar.onclick = () => borrar(producto.id);
+      acciones.append(editar, eliminar);
+    }
+
+    function iniciarEdicion(producto) {
+      idEditado = producto.id;
+      nombre.value = producto.nombre;
+      precio.value = producto.precio;
+      guardar.textContent = 'Guardar';
+      cancelar.hidden = false;
+      nombre.focus();
+    }
+
+    function limpiar() {
+      idEditado = null;
+      formulario.reset();
+      guardar.textContent = 'Agregar';
+      cancelar.hidden = true;
+    }
+
+    function borrar(id) {
+      if (!confirm('¿Eliminar este producto?')) return;
+      bloquear(true);
+      google.script.run.withFailureHandler(mostrarError).withSuccessHandler(() => {
+        if (idEditado === id) limpiar();
+        cargar();
+      }).eliminarProducto(id);
+    }
+
+    cancelar.onclick = limpiar;
+    formulario.onsubmit = evento => {
+      evento.preventDefault();
+      const datos = { nombre: nombre.value.trim(), precio: precio.value };
+      bloquear(true);
+      google.script.run.withFailureHandler(mostrarError).withSuccessHandler(() => {
+        limpiar();
+        cargar();
+      }).guardarProducto(idEditado, datos);
+    };
+    cargar();
+  </script>
+</body>
+</html>
