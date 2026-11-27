@@ -4,21 +4,14 @@ La página de Google Apps Script llama a la API de Spring Boot. Spring Boot guar
 
 ## 1. Conectar Supabase
 
-1. Abre tu proyecto en Supabase y entra a **Connect → Session pooler**. Copia el host y el usuario que aparecen ahí. Esta conexión usa el puerto `5432` y funciona por IPv4. [Conexiones de Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres)
-2. En [Codespaces secrets de GitHub](https://github.com/settings/codespaces), crea estos tres secretos y habilítalos para `MelvinYabar/GCC-2`.
+El perfil `supabase` ya tiene configurado el **Session pooler** de este proyecto. Usa el puerto `5432` y requiere SSL. [Conexiones de Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres)
 
-| Nombre | Valor |
-| --- | --- |
-| `SUPABASE_DB_URL` | `jdbc:postgresql://HOST_DEL_SESSION_POOLER:5432/postgres?sslmode=require` |
-| `SUPABASE_DB_USER` | El usuario de **Session pooler**, por ejemplo `postgres.gpbmbgjhuahdwdttybid` |
-| `SUPABASE_DB_PASSWORD` | La contraseña de la base de datos de Supabase |
-
-En la URL, reemplaza `HOST_DEL_SESSION_POOLER` por el host exacto que muestra Supabase. Si usas una red con acceso al host directo, puedes poner `jdbc:postgresql://db.gpbmbgjhuahdwdttybid.supabase.co:5432/postgres?sslmode=require` y el usuario `postgres`. La contraseña va únicamente en su secreto.
+En [Codespaces secrets de GitHub](https://github.com/settings/codespaces), guarda la contraseña de la base de datos en `SUPABASE_DB_PASSWORD` y habilita el secreto para `MelvinYabar/GCC-2`.
 
 ## 2. Ejecutar Spring Boot en Codespaces
 
 1. En [GCC-2](https://github.com/MelvinYabar/GCC-2), entra a **Code → Codespaces → Create codespace on main**. El entorno instala Java 17 y Maven y reenvía el puerto `8080`.
-2. Si ya tenías un Codespace, trae los cambios con `git pull` y usa **Codespaces: Rebuild Container**. Si agregaste secretos con el Codespace en ejecución, detenlo y vuelve a abrirlo para que los reciba. [Secretos de Codespaces](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces)
+2. Si ya tenías un Codespace en `main`, trae los cambios con `git pull --ff-only`. Si agregaste el secreto con el Codespace en ejecución, detenlo y vuelve a abrirlo para que lo reciba. [Secretos de Codespaces](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces)
 3. Ejecuta en la terminal:
 
    ```bash
@@ -48,7 +41,7 @@ Edita y guarda el archivo Java en Codespaces. Detén Spring Boot con `Ctrl+C` y 
 | `Pokemon.java` | Define las tres columnas y valida los datos. |
 | `PokemonController.java` | Recibe `GET` y `POST` en `/api/pokemon` y `PUT` y `DELETE` en `/api/pokemon/{id}`. |
 | `PokemonRepository.java` | Lee y guarda en PostgreSQL usando JPA. |
-| `application-supabase.properties` | Lee la conexión a Supabase desde los secretos. |
+| `application-supabase.properties` | Configura el host y usuario del Session pooler y lee la contraseña del secreto de Codespaces. |
 | `apps-script/Code.gs` | Envía las peticiones REST a Spring Boot. |
 | `apps-script/Index.html` | Muestra el formulario y la lista. |
 
