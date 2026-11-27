@@ -1,18 +1,18 @@
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index').setTitle('Productos');
+  return HtmlService.createHtmlOutputFromFile('Index').setTitle('Pokémon');
 }
 
-function listarProductos() {
+function listarPokemons() {
   return llamarApi_('get', '');
 }
 
-function guardarProducto(id, producto) {
+function guardarPokemon(id, pokemon) {
   return id
-    ? llamarApi_('put', '/' + encodeURIComponent(id), producto)
-    : llamarApi_('post', '', producto);
+    ? llamarApi_('put', '/' + encodeURIComponent(id), pokemon)
+    : llamarApi_('post', '', pokemon);
 }
 
-function eliminarProducto(id) {
+function eliminarPokemon(id) {
   return llamarApi_('delete', '/' + encodeURIComponent(id));
 }
 
@@ -28,10 +28,10 @@ function llamarApi_(metodo, ruta, datos) {
     opciones.payload = JSON.stringify(datos);
   }
 
-  const respuesta = UrlFetchApp.fetch(base.replace(/\/+$/, '') + '/api/productos' + ruta, opciones);
+  const respuesta = UrlFetchApp.fetch(base.replace(/\/+$/, '') + '/api/pokemon' + ruta, opciones);
   const estado = respuesta.getResponseCode();
   if (estado === 204) return null;
-  if (estado === 400) throw new Error('Revisa el nombre y el precio.');
+  if (estado === 400) throw new Error('Revisa el nombre y el tipo.');
   if (estado < 200 || estado >= 300) throw new Error('La API respondió HTTP ' + estado + '.');
   return JSON.parse(respuesta.getContentText());
 }

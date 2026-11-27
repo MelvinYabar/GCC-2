@@ -1,4 +1,4 @@
-package com.ejemplo.productos;
+package com.ejemplo.pokemon;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,16 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
 
 @Entity
-@Table(name = "productos")
-public class Producto {
+@Table(name = "pokemon")
+public class Pokemon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,11 +21,10 @@ public class Producto {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @NotNull
-    @PositiveOrZero
-    @Digits(integer = 8, fraction = 2)
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal precio;
+    @NotBlank
+    @Size(max = 30)
+    @Column(nullable = false, length = 30)
+    private String tipo;
 
     public Long getId() {
         return id;
@@ -43,11 +38,11 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public BigDecimal getPrecio() {
-        return precio;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

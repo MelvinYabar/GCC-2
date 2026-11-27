@@ -6,6 +6,6 @@ RUN mvn -B package
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/target/crud-productos-1.0.0.jar app.jar
+COPY --from=build /app/target/crud-pokemon-1.0.0.jar app.jar
 USER 10001
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=60.0", "-jar", "app.jar"]

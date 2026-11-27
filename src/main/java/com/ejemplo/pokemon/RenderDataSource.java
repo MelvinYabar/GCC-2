@@ -1,4 +1,4 @@
-package com.ejemplo.productos;
+package com.ejemplo.pokemon;
 
 import com.zaxxer.hikari.HikariDataSource;
 import java.net.URI;
